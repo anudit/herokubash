@@ -1,0 +1,28 @@
+i() {
+  sed 's/^/       /'
+}
+
+export BUILD_DIR=$1
+export CACHE_DIR=$2
+export ENV_DIR=$3
+
+cd "$BUILD_DIR"
+
+if [[ -f "$ENV_DIR/BUILDPACK_RUN" ]]; then
+  RUN=$(cat "$ENV_DIR/BUILDPACK_RUN")
+elif [[ -f ./buildscript.sh ]]; then
+  RUN=./buildscript.sh
+else
+  echo "Error: can't apply buildpack, because neither the BUILDPACK_RUN" | i
+  echo "config variable, nor the file buildscript.sh exists." | i
+  echo
+  exit 1
+fi
+
+IFS=':' cmds=($RUN)
+for c in ${cmds[@]}; do
+  echo "Running: bash $c" | sed 's/^/-----> /'
+  eval bash $c
+done
+
+exit 0
