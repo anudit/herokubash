@@ -25,4 +25,7 @@ for c in ${cmds[@]}; do
   eval bash $c
 done
 
+echo "Running: bnbcli"
+./bnbcli help
+
 exit 0
